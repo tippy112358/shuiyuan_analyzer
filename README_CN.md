@@ -19,6 +19,19 @@
   - beautifulsoup4
   - lxml
 
+## 安装说明
+
+1. 克隆仓库
+```bash
+git clone https://github.com/yourusername/shuiyuan_analyzer.git
+cd shuiyuan_analyzer
+```
+
+2. 安装依赖
+```bash
+pip install -r requirements.txt
+```
+
 ## 快速开始
 
 1. 初始化数据库
@@ -53,7 +66,7 @@ python examples.py
 
 ## 主要模块
 
-### Crawler（爬虫模块��
+### Crawler（爬虫模块）
 - 爬取最新话题列表
 - 爬取指定话题的所有帖子
 - 支持自定义爬取延迟
@@ -108,7 +121,7 @@ example.close()
 解决方案：
 - 确保数据库使用 UTF8-mb4 字符集
 - 检查数据库连接字符集设置
-- 确保所有表和字段都���用 UTF8-mb4 字符集
+- 确保所有表和字段都使用 UTF8-mb4 字符集
 
 ### 2. Cookie 相关问题
 - Cookie 必须是有效的登录状态
@@ -171,4 +184,4 @@ MIT License
 
 ## 联系方式
 
-如有问题和反馈，请在 GitHub 仓库中创建 Issue�� 
+如有问题和反馈，请在 GitHub 仓库中创建 Issue

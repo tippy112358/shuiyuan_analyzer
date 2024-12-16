@@ -1,0 +1,14 @@
+# Core dependencies
+mysql-connector-python>=8.0.0
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# Logging and error handling
+logging>=0.5.1.2
+
+# Type hints support
+typing-extensions>=4.7.0
+
+# DateTime handling
+python-dateutil>=2.8.2 

@@ -19,6 +19,19 @@ A data analysis tool for ShuiYuan Community (SJTU), featuring crawler and data a
   - beautifulsoup4
   - lxml
 
+## Installation
+
+1. Clone the repository
+```bash
+git clone https://github.com/yourusername/shuiyuan_analyzer.git
+cd shuiyuan_analyzer
+```
+
+2. Install dependencies
+```bash
+pip install -r requirements.txt
+```
+
 ## Quick Start
 
 1. Initialize Database
