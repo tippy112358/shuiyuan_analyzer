@@ -16,30 +16,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `Post`
---
-
-DROP TABLE IF EXISTS `Post`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `Post` (
-  `id` int unsigned NOT NULL,
-  `content` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
-  `user_id` int DEFAULT NULL,
-  `reads` int DEFAULT NULL,
-  `created_at` datetime DEFAULT NULL,
-  `updated_at` datetime DEFAULT NULL,
-  `post_type` int DEFAULT NULL,
-  `score` float DEFAULT NULL,
-  `version` int DEFAULT NULL,
-  `likes` int DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `Post_User_FK` (`user_id`),
-  CONSTRAINT `Post_User_FK` FOREIGN KEY (`user_id`) REFERENCES `User` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `Topic`
 --
 
@@ -67,25 +43,6 @@ CREATE TABLE `Topic` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `TopicPost`
---
-
-DROP TABLE IF EXISTS `TopicPost`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `TopicPost` (
-  `post_id` int unsigned NOT NULL,
-  `topic_id` int unsigned DEFAULT NULL,
-  `post_number` int DEFAULT NULL,
-  `reply_to_post_number` int DEFAULT NULL,
-  PRIMARY KEY (`post_id`),
-  UNIQUE KEY `TopicPost_UNIQUE` (`topic_id`,`post_number`),
-  CONSTRAINT `TopicPost_Post_FK` FOREIGN KEY (`post_id`) REFERENCES `Post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `TopicPost_Topic_FK` FOREIGN KEY (`topic_id`) REFERENCES `Topic` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `User`
 --
 
@@ -95,7 +52,7 @@ DROP TABLE IF EXISTS `User`;
 CREATE TABLE `User` (
   `id` int NOT NULL,
   `username` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `name` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `trust_level` int DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -104,82 +61,6 @@ CREATE TABLE `User` (
 --
 -- Dumping routines for database 'shuiyuan'
 --
-/*!50003 DROP PROCEDURE IF EXISTS `ADDPOST` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `ADDPOST`(
-    IN Post_id INT UNSIGNED,
-    IN Post_content LONGTEXT,
-    IN Post_user_id INT,
-    IN Post_reads INT,
-    IN Post_created_at DATETIME,
-    IN Post_updated_at DATETIME,
-    IN Post_post_type INT,
-    IN Post_score FLOAT,
-    IN Post_version INT,
-    IN Post_likes INT,
-    IN Topic_id INT UNSIGNED,
-    IN Post_number INT,
-    IN Reply_to_post_number INT
-)
-BEGIN
-    DECLARE post_recordExists INT;
-    DECLARE topic_post_recordExists INT;
-
-    -- 检查Post表中是否已经存在相同的Post_id
-    SELECT COUNT(*) INTO post_recordExists
-    FROM Post
-    WHERE id = Post_id;
-    
-    IF post_recordExists > 0 THEN
-        -- 如果存在，更新Post表
-        UPDATE Post
-        SET content = Post_content,
-            user_id = Post_user_id,
-            Post.reads = Post_reads,
-            created_at = Post_created_at,
-            updated_at = Post_updated_at,
-            post_type = Post_post_type,
-            score = Post_score,
-            version = Post_version,
-            likes = Post_likes
-        WHERE id = Post_id;
-    ELSE
-        -- 如果不存在，插入新Post记录
-        INSERT INTO Post (id, content, user_id, Post.reads, created_at, updated_at, post_type, score, Post.version, likes)
-        VALUES (Post_id, Post_content, Post_user_id, Post_reads, Post_created_at, Post_updated_at, Post_post_type, Post_score, Post_version, Post_likes);
-    END IF;
-
-    -- 检查TopicPost表中是否已经存在相同的Post_id和Topic_id
-    SELECT COUNT(*) INTO topic_post_recordExists
-    FROM TopicPost
-    WHERE post_id = Post_id AND topic_id = Topic_id;
-    
-    IF topic_post_recordExists > 0 THEN
-        -- 如果存在，更新TopicPost表
-        UPDATE TopicPost
-        SET post_number = Post_number, 
-            reply_to_post_number = Reply_to_post_number
-        WHERE post_id = Post_id AND topic_id = Topic_id;
-    ELSE
-        -- 如果不存在，插入新TopicPost记录
-        INSERT INTO TopicPost (post_id, topic_id, post_number, reply_to_post_number)
-        VALUES (Post_id, Topic_id, Post_number, Reply_to_post_number);
-    END IF;
-
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `ADDTOPIC` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -252,8 +133,8 @@ DELIMITER ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `ADDUSER`(
 	IN userId INT,         -- 用户ID
-	IN userUserName VARCHAR(500), -- 用户昵称
-    IN userName VARCHAR(500), -- 用户名
+	IN userUserName VARCHAR(100), -- 用户昵称
+    IN userName VARCHAR(100), -- 用户名
     IN userTrust_Level INT      -- 用户等级
     
 )
@@ -293,4 +174,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-12-16 11:14:37
+-- Dump completed on 2024-12-14 19:59:49
