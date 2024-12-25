@@ -11,8 +11,11 @@ class DataParser:
         return (
             int(user['id']),
             user['username'],
-            user['name'],
-            int(user['trust_level'])
+            user.get('name', ''),
+            user.get('trust_level', 0),  # 默认trust_level为0
+            user.get('profile_hidden', False),
+            user.get('title', ''),
+            user.get('cakedate', '1970-01-01')  # 添加cakedate字段
         )
 
     @staticmethod
@@ -46,7 +49,7 @@ class DataParser:
         
         # 解析帖子内容
         content = DataParser.parse_post_content(post['cooked'])
-        
+
         return (
             post['id'],
             content,
